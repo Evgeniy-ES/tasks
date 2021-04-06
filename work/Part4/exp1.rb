@@ -1,66 +1,53 @@
 class Station
-  def initialize(name)
-    @name = name
-    @tarins_on_station = {}
+
+  attr_reader :tarins_on_station
+
+  def initialize(station)
+    @station = station
+    @tarins_on_station = []
   end
 
-  def arrive(num_train, type_tain)       # прибытие поезда
-      @tarins_on_station[num_train] = type_tain
+  def arrive(train)       # прибытие поезда
+      @tarins_on_station << train
   end
 
-  def departure(num_train)       # отбытие поезда
-    if @tarins_on_station[num_train].nil?
-      puts "Поезда с таким номером нет на станции"
+  def departure(train)       # отбытие поезда
+    if @tarins_on_station.include?(train)
+      @tarins_on_station.delete(train)
     else
-      @tarins_on_station.delete(num_train)
+      puts "Поезда с таким номером нет на станции"
     end
   end
 
-  def all_trains
-    @tarins_on_station.each_key {| key | puts key }
-  end
-
-  def trains_info
-    q_cargo = 0
-    q_passenger = 0
-    @tarins_on_station.each do |key, type_tain|
-      q_cargo += 1 if type_tain == "cargo"
-      q_passenger += 1 if type_tain == "passenger"
+  def trains_info(type)
+    count = 0
+    @tarins_on_station.each do |train|
+      count += 1 if train.type == type
     end
-    puts "На станции #{q_cargo} грузовых поездов" if q_cargo > 0
-    puts "На станции #{q_passenger} пассажирских поездов" if q_passenger > 0
+    puts "На станции #{count} #{type} поездов " if count > 0
   end
 end
 
 class Route
+  attr_reader :stations
   def initialize(begin_station, end_station)
-    @array_stations = []
-    @array_stations[0] = begin_station
-    @array_stations[1] = end_station
+    @stations = [begin_station, end_station]
   end
 
   def add_station(name_station)
-    if a.index(name_station).nil?
-      end_station = @array_stations[@array_stations.size - 1]
-      @array_stations.delete_at(@array_stations.size - 1)
-      @array_stations << name_station
-      @array_stations << end_station
+    if @stations.index(name_station).nil?
+      @stations.insert(-2, name_station)
     else
       puts "Такая станция уже есть в маршрте"
     end
-
   end
 
   def delete_station(name_station)
-    if a.index(name_station).nil?
+    if @stations.index(name_station).nil?
       puts "Такой станции нет в маршрте"
     else
-      @array_stations.delete(name_station)
+      @stations.delete(name_station)
     end
-  end
-
-  def all_stations
-    @array_stations.each { |station| puts station }
   end
 end
 
@@ -68,6 +55,7 @@ class Train
 
   attr_accessor :speed
   attr_reader :number_of_wagon
+  attr_reader :type
 
   def initialize(number, type, number_of_wagon)
     @number = number
@@ -98,43 +86,51 @@ class Train
     end
   end
 
-  def route_tarin(route)
-    @route = route
+  def route_train(route)
+    @route = route.stations
     @station = @route[0]
   end
 
   def station_up
-    index_now_station = @route.index(@station)
-    if index_now_station < @route.size - 1
-      @station = @route[index_now_station + 1]
-    else
+    if next_station.nil?
       puts "Движение вперёд невозможно, вы на конечной стации маршрута"
+    else
+      @station = next_station
     end
   end
 
   def station_down
-    index_now_station = @route.index(@station)
-    if index_now_station > 0
-      @station = @route[index_now_station - 1]
-    else
+    if previous_station.nil?
       puts "Движение назад невозможно, вы на начальной стации маршрута"
+    else
+      @station = previous_station
     end
   end
 
   def now_place
     puts "Текущая станция #{@station}"
-    index_now_station = @route.index(@station)
-    if index_now_station > 0
-      puts "Предыдущая станция #{@route[index_now_station - 1]}"
-    else
+
+    if previous_station.nil?
       puts "Текущая станция является началом маршрута"
+    else
+      puts "Предыдущая станция #{previous_station}"
     end
 
-    if index_now_station < @route.size - 1
-      puts "Следующая станция #{@route[index_now_station + 1]}"
-    else
+    if next_station.nil?
       puts "Текущая станция является концом маршрута"
+    else
+      puts "Следующая станция #{next_station}"
     end
+  end
+
+  def previous_station
+    index_now_station = @route.index(@station)
+    @route[index_now_station - 1] if index_now_station > 0
+  end
+
+  def next_station
+    index_now_station = @route.index(@station)
+    @route[index_now_station + 1] if index_now_station < @route.size - 1
   end
 
 end
