@@ -1,6 +1,7 @@
 class Station
 
   attr_reader :tarins_on_station
+  attr_reader :station
 
   def initialize(station)
     @station = station
@@ -30,23 +31,23 @@ end
 
 class Route
   attr_reader :stations
-  def initialize(begin_station, end_station)
-    @stations = [begin_station, end_station]
+  def initialize(station1, station2)
+    @stations = [station1, station2]
   end
 
-  def add_station(name_station)
-    if @stations.index(name_station).nil?
-      @stations.insert(-2, name_station)
+  def add_station(station)
+    if @stations.index(station).nil?
+      @stations.insert(-2, station)
     else
       puts "Такая станция уже есть в маршрте"
     end
   end
 
-  def delete_station(name_station)
-    if @stations.index(name_station).nil?
+  def delete_station(station)
+    if @stations.index(station).nil?
       puts "Такой станции нет в маршрте"
     else
-      @stations.delete(name_station)
+      @stations.delete(station)
     end
   end
 end
@@ -108,18 +109,18 @@ class Train
   end
 
   def now_place
-    puts "Текущая станция #{@station}"
+    puts "Текущая станция #{@station.station}"
 
     if previous_station.nil?
       puts "Текущая станция является началом маршрута"
     else
-      puts "Предыдущая станция #{previous_station}"
+      puts "Предыдущая станция #{previous_station.station}"
     end
 
     if next_station.nil?
       puts "Текущая станция является концом маршрута"
     else
-      puts "Следующая станция #{next_station}"
+      puts "Следующая станция #{next_station.station}"
     end
   end
 
