@@ -88,24 +88,23 @@ class Train
   end
 
   def route_train(route)
-    @route = route.stations
-    @station = @route[0]
+    @route = route
+    @station = @route.stations[0]
+    @station.arrive(self)
   end
 
   def station_up
-    if next_station.nil?
-      puts "Движение вперёд невозможно, вы на конечной стации маршрута"
-    else
-      @station = next_station
-    end
+    return unless next_station
+    @station.departure(self)
+    @station.arrive(self)
+    @station = next_station
   end
 
   def station_down
-    if previous_station.nil?
-      puts "Движение назад невозможно, вы на начальной стации маршрута"
-    else
-      @station = previous_station
-    end
+    return unless previous_station
+    @station.departure(self)
+    @station = previous_station
+    @station.arrive(self)
   end
 
   def now_place
@@ -125,13 +124,13 @@ class Train
   end
 
   def previous_station
-    index_now_station = @route.index(@station)
-    @route[index_now_station - 1] if index_now_station > 0
+    index_now_station = @route.stations.index(@station)
+    @route.stations[index_now_station - 1] if index_now_station > 0
   end
 
   def next_station
-    index_now_station = @route.index(@station)
-    @route[index_now_station + 1] if index_now_station < @route.size - 1
+    index_now_station = @route.stations.index(@station)
+    @route.stations[index_now_station + 1] if index_now_station < @route.stations.size - 1
   end
 
 end
