@@ -1,6 +1,6 @@
-class CargoWagon
-  attr_reader :type
+class CargoWagon < Wagon
+
   def initialize
-    @type = "cargo"
+    @type = :cargo
   end
 end

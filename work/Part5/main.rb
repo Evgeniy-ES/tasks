@@ -4,8 +4,10 @@ require_relative 'route'
 require_relative 'train'
 require_relative 'passenger_train'
 require_relative 'cargo_train'
+require_relative 'wagon'
 require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
+
 
 include Menu  # методы связанные с выводом вопросов, были вынесены в отдельный модуль, для лучшей читаемости кода
 
@@ -13,7 +15,7 @@ include Menu  # методы связанные с выводом вопросо
 def menu      # главное меню, тут выбираются объекты для дальнейшей работы
   i = false
   while i == false
-    want = menu_main
+    want = get_menu_main
     case want
     when 0
       i = true
@@ -30,7 +32,7 @@ end
 def work_with_trains
   i = false
   while i == false
-    want = menu_train
+    want = get_menu_train
     case want
     when 0
       i = true
@@ -90,7 +92,7 @@ def show_all_trains
     if train.station == ""
       station = ""
     else
-      station = train.station.station
+      station = train.station.name
     end
     puts "#{i} Поезд номер #{train.number} тип #{train.type} количество вагонов #{train.number_of_wagon.size}, станция  #{station}"
     i += 1
@@ -146,7 +148,7 @@ end
 def menu_routes
   i = false
   while i == false
-    want = menu_routes0
+    want = get_menu_routes
     case want
     when 0
       i = true
@@ -157,14 +159,14 @@ def menu_routes
 end
 
 def create_route
-show_all_station
+show_all_stations
   if  @all_stations.size < 2
     puts "Для создания маршрута необходимо минимум две станции, создайте необходимое количество"
     create_station
   else
-    num0 = find_num("начальной", @all_stations.size, nil, "станции")
-    num1 = find_num("конечной", @all_stations.size, num0, "станции")
-    route = Route.new(@all_stations[num0], @all_stations[num1])
+    start_station = find_num("начальной", @all_stations.size, nil, "станции")
+    end_station = find_num("конечной", @all_stations.size, start_station, "станции")
+    route = Route.new(@all_stations[start_station], @all_stations[end_station])
     i = false
     while i == false
       puts "Хотите добавить станцию в маршрут нажмите 1, хотите выйти нажмите 0"
@@ -172,12 +174,13 @@ show_all_station
       if want == 0
         i = true
       else
-        show_all_station
+        show_all_stations
         if @all_stations.size < 3
           puts "Станций всего две, необходимо сначало создать станцию, а потом добавить её в маршрут"
           create_station
-          num0 = find_num("промежуточной", @all_stations.size, nil)
-          route.add_station(@all_stations[num0])
+        else
+          middle_station= find_num("промежуточной", @all_stations.size, nil, "станции")
+          route.add_station(@all_stations[middle_station])
         end
       end
     end
@@ -201,11 +204,11 @@ def create_station
     @all_stations << new_station
 end
 
-def show_all_station
+def show_all_stations
   puts "------------------Все станции-----------------------"
   i = 0
   @all_stations.each do |station|
-    puts "#{i} Станция #{station.station}"
+    puts "#{i} Станция #{station.name}"
     i += 1
   end
   puts "=================================================="
@@ -216,14 +219,14 @@ end
 def work_with_stations
   i = false
   while i == false
-    want = menu_station
+    want = get_menu_station
     case want
     when 0
       i = true
     when 1
       create_station
     when 2
-      show_all_station
+      show_all_stations
     when 3
       show_trains_on_station
     end
@@ -231,9 +234,9 @@ def work_with_stations
 end
 
 def show_trains_on_station
-  show_all_station
+  show_all_stations
   num = find_num("необходимой", @all_stations.size, nil, "станции")
-  puts "#{@all_stations[num].tarins_on_station}"
+  puts "#{@all_stations[num].trains_on_station}"
 end
 
 @all_stations = []
