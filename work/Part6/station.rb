@@ -1,8 +1,10 @@
 class Station
   require_relative 'instance_counter'
-  extend InstanceCounter
+  extend InstanceCounter::ClassMethods
+  include InstanceCounter::InstanceMethods
 
   @@all_stations_class = []
+  @@count_class = 0
   attr_reader :tarins_on_station
   attr_reader :name
 
@@ -13,7 +15,13 @@ class Station
   end
 
   def self.instances_class
-    instances(@@all_stations_class)
+    @@count_class = instances(@@all_stations_class)
+    puts @@count_class
+  end
+
+  def metod_add
+    @@count_class = register_instance(@@all_stations_class)
+    puts @@count_class
   end
 
   def self.show_all_stations_metod

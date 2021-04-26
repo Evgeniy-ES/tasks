@@ -1,6 +1,3 @@
 module Company
-  def name_company(name_manufacturer)
-    name_manufacturer = "noname" if name_manufacturer.nil?
-    name_manufacturer
-  end
+  attr_accessor name_manufacturer
 end

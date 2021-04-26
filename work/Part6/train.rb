@@ -3,9 +3,11 @@ class Train
   require_relative 'instance_counter'
 
   include Company
-  extend InstanceCounter
+  extend InstanceCounter::ClassMethods
+  include InstanceCounter::InstanceMethods
 
   @@trains = []
+  @@count_class = 0
   attr_accessor :speed
   attr_accessor :route
   attr_reader :number_of_wagon
@@ -23,7 +25,13 @@ class Train
   end
 
   def self.instances_class
-    instances(@@trains)
+    @@count_class = instances(@@trains)
+    puts @@count_class
+  end
+
+  def metod_add
+    @@count_class = register_instance(@@trains)
+    puts @@count_class
   end
 
   def self.find#(number)

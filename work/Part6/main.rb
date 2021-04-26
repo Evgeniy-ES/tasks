@@ -47,7 +47,11 @@ def work_with_trains
     when 5
       Train.find
     when 6
-      Train.instances_class 
+      Train.instances_class
+    when 7
+      show_all_trains
+      num_train = find_num("", @all_trains.size, nil, "поезда")
+      @all_trains[num_train].metod_add
     end
   end
 end
@@ -168,6 +172,12 @@ def menu_routes
       i = true
     when 1
       create_route
+    when 2
+      Route.instances_class
+    when 3
+      show_all_routes
+      num_route = find_num("", @all_routes.size, nil, "маршруты")
+      @all_routes[num_route].metod_add
     end
   end
 end
@@ -181,6 +191,7 @@ show_all_stations
     start_station = find_num("начальной", @all_stations.size, nil, "станции")
     end_station = find_num("конечной", @all_stations.size, start_station, "станции")
     route = Route.new(@all_stations[start_station], @all_stations[end_station])
+    @all_routes << route
     i = false
     while i == false
       puts "Хотите добавить станцию в маршрут нажмите 1, хотите выйти нажмите 0"
@@ -228,6 +239,16 @@ def show_all_stations
   puts "=================================================="
 end
 
+def show_all_routes
+  puts "------------------Все маршруты-----------------------"
+  i = 0
+  @all_routes.each do |route|
+    puts "#{i} Станция #{route}"
+    i += 1
+  end
+  puts "=================================================="
+end
+
 
 
 def work_with_stations
@@ -245,6 +266,12 @@ def work_with_stations
       show_trains_on_station
     when 4
       Station.show_all_stations_metod
+    when 5
+      Station.instances_class
+    when 6
+      show_all_stations
+      num = find_num("необходимой", @all_stations.size, nil, "станции")
+      @all_stations[num_station].metod_add
     end
   end
 end
@@ -257,6 +284,7 @@ end
 
 @all_stations = []
 @all_trains = []
+@all_routes = []
 i = false
 
 while i == false
