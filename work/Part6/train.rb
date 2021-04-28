@@ -33,9 +33,9 @@ class Train
     @@trains[index]
   end
 
-  def self.change_train(index, train)
-    @@trains[index] = train
-  end
+#  def self.change_train(index, train)
+  #  @@trains[index] = train
+  #end
 
   def self.add_wagon(index)
     if index < 0 || index + 1 > @@trains.size

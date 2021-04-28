@@ -10,9 +10,9 @@ class Route
     @@all_routes.each_index { |x| puts " Индекс #{x} маршрут #{@@all_routes[x]}"}
   end
 
-  def self.change_route(index, route)
-    @@all_routes[index] = route
-  end
+#  def self.change_route(index, route)
+#    @@all_routes[index] = route
+#  end
 
   def self.get_route(index)
     @@all_routes[index]
