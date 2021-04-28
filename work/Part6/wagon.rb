@@ -1,8 +1,9 @@
 class Wagon
-  require_relative 'company'
+  include Menu
+  attr_reader :type, :name
 
-  include Company
-  attr_reader :type
-  attr_reader :manufacturer
-
+  def initialize(name, type)
+    @type = type
+    @name = name
+  end
 end

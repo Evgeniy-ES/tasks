@@ -1,7 +1,6 @@
 class PassengerWagon < Wagon
-
-  def initialize(company)
+  def initialize(name)
     @type = :passenger
-    @manufacturer = name_company(company)
+    super(name, :passenger)
   end
 end

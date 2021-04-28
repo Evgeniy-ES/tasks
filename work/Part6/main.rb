@@ -1,5 +1,4 @@
 require_relative 'station'
-require_relative 'menu'
 require_relative 'route'
 require_relative 'train'
 require_relative 'passenger_train'
@@ -7,10 +6,10 @@ require_relative 'cargo_train'
 require_relative 'wagon'
 require_relative 'passenger_wagon'
 require_relative 'cargo_wagon'
-require_relative 'company'
+require_relative 'all_modules'
 
-include Company
 include Menu  # методы связанные с выводом вопросов, были вынесены в отдельный модуль, для лучшей читаемости кода
+
 
 def menu      # главное меню, тут выбираются объекты для дальнейшей работы
   i = false
@@ -22,9 +21,9 @@ def menu      # главное меню, тут выбираются объек�
     when 1
       work_with_stations
     when 2
-      menu_routes
-    when 3
       work_with_trains
+    when 3
+      menu_routes
     end
   end
 end
@@ -41,38 +40,61 @@ def work_with_trains
     when 2
       add_wagon
     when 3
-      delete_wagon
+      del_wagon_main
     when 4
       movie_train
     when 5
       Train.find
     when 6
-      Train.instances_class
-    when 7
-      show_all_trains
-      num_train = find_num("", @all_trains.size, nil, "поезда")
-      @all_trains[num_train].metod_add
+      add_route_train
     end
   end
 end
 
 def movie_train
-  i = false
-  while i == false
-    puts "Хотите передвинуть поезд нажмите 1, хотите выйти нажмите 0"
-    want = gets.chomp.to_i
-    if want == 0
-      i = true
-    else
-      show_all_trains
-      num_train = find_num("", @all_trains.size, nil, "поезда")
-      puts "Хотите передвинуть поезд вперед по маршруту нажмите 1, назад любую другую цифру"
+  Train.all_trains
+  puts "Введите индекс поезда укоторый хотите подвинуть по маршруту"
+  train_index = gets.chomp.to_i
+  train = Train.get_train(train_index)
+  if train.nil?
+    puts "Вы ввели неправильный индекс"
+  else
+    puts "Станции маршрута выбранного поезда:"
+    train.route.stations.each { |x| puts x.name}
+    i = false
+    while i == false
+      puts "Введите 0 если хотите выйти, 1 подвинуть поезд вперед, 2 подвинуть поезд назад"
       want = gets.chomp.to_i
-      if want == 1
-        @all_trains[num_train].station_up
-      else
-        @all_trains[num_train].station_down
+      case want
+      when 0
+        i = true
+      when 1
+        train.station_up
+      when 2
+        train.station_down
       end
+    end
+  end
+end
+
+def add_route_train
+  Train.all_trains
+  puts "Введите индекс поезда к которому хотите добавить вагон"
+  train_index = gets.chomp.to_i
+  train = Train.get_train(train_index)
+  if train.nil?
+    puts "Вы ввели неправильный индекс"
+  else
+    puts "Маршруты:"
+    Route.all
+    puts "Выберите индекс маршрута"
+    route_index = gets.chomp.to_i
+    route = Route.get_route(route_index)
+    if route.nil?
+      puts "Вы ввели неправильный индекс"
+    else
+      train.route_train(route)
+      Train.change_train(train_index, train)
     end
   end
 end
@@ -82,174 +104,26 @@ def create_train
     num_train = gets.chomp.to_i
     puts "Введите 0 если поезд грузовой, если пассажирский, то любую другую цифру"
     type_train_num = gets.chomp.to_i
-
-    puts "Введите название производителя поезда, если не знаете, то нажмите 0"
-    manufacturer_train = gets.chomp.to_i
-
-    manufacturer_train = "noname" if manufacturer_train == 0
-    new_train = "train" + @all_trains.size.to_s
-    puts "Введите 0 #{new_train}"
     if  type_train_num == 0
-      new_train = CargoTrain.new(num_train, manufacturer_train)
+      CargoTrain.new(num_train)
     else
-      new_train = PassengerTrain.new(num_train, manufacturer_train)
+      PassengerTrain.new(num_train)
     end
-    @all_trains << new_train
-end
-
-def show_all_trains
-  puts "------------------Все поезда-----------------------"
-  i = 0
-  @all_trains.each do |train|
-    if train.station == ""
-      station = ""
-    else
-      station = train.station.name
-    end
-    puts "#{i} Поезд номер #{train.number} тип #{train.type} количество вагонов #{train.number_of_wagon.size}, станция  #{station}"
-    i += 1
-  end
-  puts "=================================================="
-end
-
-def delete_wagon
-  i = false
-  while i == false
-    puts "Хотите отцепить вагон от поезда нажмите 1, хотите выйти нажмите 0"
-    want = gets.chomp.to_i
-    if want == 0
-      i = true
-    else
-      show_all_trains
-      num_train = find_num("", @all_trains.size, nil, "поезда")
-      @all_trains[num_train].delete_wagon
-    end
-  end
 end
 
 def add_wagon
-  i = false
-  while i == false
-    puts "Хотите добавить вагон к поезду нажмите 1, хотите выйти нажмите 0"
-    want = gets.chomp.to_i
-
-    if want == 0
-      i = true
-    else
-      show_all_trains
-      num_train = find_num("", @all_trains.size, nil, "поезда")
-      i1 = false
-      while i1 == false
-        puts "Для добавления грузового вагона нажмите 1, пассажирского любую другую цифру, для выхода нажмите 0"
-        want = gets.chomp.to_i
-
-        puts "Введите название производителя вагона, если не знаете, то нажмите 0"
-        manufacturer_wagon = gets.chomp.to_i
-
-        manufacturer_wagon = "noname" if manufacturer_wagon == 0
-
-        case want
-        when 0
-          i1 = true
-        when 1
-          cargo_wagon = CargoWagon.new(manufacturer_wagon)
-          @all_trains[num_train].add_wagon(cargo_wagon)
-        else
-          passenger_wagon = PassengerWagon.new(manufacturer_wagon)
-          @all_trains[num_train].add_wagon(passenger_wagon)
-        end
-      end
-    end
-  end
+    Train.all_trains
+    puts "Введите индекс поезда к которому хотите добавить вагон"
+    index = gets.chomp.to_i
+    Train.add_wagon(index)
 end
 
-def menu_routes
-  i = false
-  while i == false
-    want = get_menu_routes
-    case want
-    when 0
-      i = true
-    when 1
-      create_route
-    when 2
-      Route.instances_class
-    when 3
-      show_all_routes
-      num_route = find_num("", @all_routes.size, nil, "маршруты")
-      @all_routes[num_route].metod_add
-    end
-  end
+def del_wagon_main
+    Train.all_trains
+    puts "Введите индекс поезда у которого хотите отцепить вагон"
+    index = gets.chomp.to_i
+    Train.del_wagon(index)
 end
-
-def create_route
-show_all_stations
-  if  @all_stations.size < 2
-    puts "Для создания маршрута необходимо минимум две станции, создайте необходимое количество"
-    create_station
-  else
-    start_station = find_num("начальной", @all_stations.size, nil, "станции")
-    end_station = find_num("конечной", @all_stations.size, start_station, "станции")
-    route = Route.new(@all_stations[start_station], @all_stations[end_station])
-    @all_routes << route
-    i = false
-    while i == false
-      puts "Хотите добавить станцию в маршрут нажмите 1, хотите выйти нажмите 0"
-      want = gets.chomp.to_i
-      if want == 0
-        i = true
-      else
-        show_all_stations
-        if @all_stations.size < 3
-          puts "Станций всего две, необходимо сначало создать станцию, а потом добавить её в маршрут"
-          create_station
-        else
-          middle_station= find_num("промежуточной", @all_stations.size, nil, "станции")
-          route.add_station(@all_stations[middle_station])
-        end
-      end
-    end
-  end
-
-  puts "Для присвоения маршрута поезду нажмите 1. Для выхода нажмите любую другую цифру"
-  want = gets.chomp.to_i
-  if want == 1
-    show_all_trains
-    num_train = find_num("", @all_trains.size, nil, "поезда")
-    @all_trains[num_train].route_train(route)
-  end
-
-end
-
-def create_station
-    puts "Введите название станции"
-    want = gets.chomp.to_s
-    new_station = "station"+@all_stations.size.to_s
-    new_station = Station.new(want)
-    @all_stations << new_station
-end
-
-def show_all_stations
-  puts "------------------Все станции-----------------------"
-  i = 0
-  @all_stations.each do |station|
-    puts "#{i} Станция #{station.name}"
-    i += 1
-  end
-  puts "=================================================="
-end
-
-def show_all_routes
-  puts "------------------Все маршруты-----------------------"
-  i = 0
-  @all_routes.each do |route|
-    puts "#{i} Станция #{route}"
-    i += 1
-  end
-  puts "=================================================="
-end
-
-
 
 def work_with_stations
   i = false
@@ -261,32 +135,126 @@ def work_with_stations
     when 1
       create_station
     when 2
-      show_all_stations
+      Station.all
     when 3
       show_trains_on_station
     when 4
-      Station.show_all_stations_metod
-    when 5
-      Station.instances_class
-    when 6
-      show_all_stations
-      num = find_num("необходимой", @all_stations.size, nil, "станции")
-      @all_stations[num_station].metod_add
+      show_type_trains_on_station
     end
   end
 end
 
-def show_trains_on_station
-  show_all_stations
-  num = find_num("необходимой", @all_stations.size, nil, "станции")
-  puts "#{@all_stations[num].trains_on_station}"
+def show_type_trains_on_station
+  Station.all
+  puts "Выберите индекс станци"
+  station_index = gets.chomp.to_i
+  station = Station.get_station(station_index)
+  if station.nil?
+    puts "Вы ввели неправильный индекс"
+  else
+puts station
+    puts "Введите 0 если хотите посмотреть грузвые поезда, 1 если пассажирские"
+    want = gets.chomp.to_i
+    if want == 1
+      type = :passenger
+    else
+      type = :cargo
+    end
+
+    station.trains_on_station_by_type(type)
+  end
 end
 
-@all_stations = []
-@all_trains = []
-@all_routes = []
-i = false
+def show_trains_on_station
+  Station.all
+  puts "Выберите индекс станци"
+  station_index = gets.chomp.to_i
+  station = Station.get_station(station_index)
+  if station.nil?
+    puts "Вы ввели неправильный индекс"
+  else
+    station.trains_on_station
+  end
+end
 
+def create_station
+    Station.all
+    puts "Введите название станции"
+    want = gets.chomp.to_s
+    Station.new(want)
+end
+
+def menu_routes
+  i = false
+  while i == false
+    want = get_menu_route
+    case want
+    when 0
+      i = true
+    when 1
+      create_route
+    when 2
+      add_station_in_route
+    end
+  end
+end
+
+def add_station_in_route
+  Route.all
+  puts "Выберите индекс маршрута"
+  route_index = gets.chomp.to_i
+  route = Route.get_route(route_index)
+  if route.nil?
+    puts "Вы ввели неправильный индекс"
+  else
+    puts "Станции маршрута:"
+    route.stations.each { |x| puts x.name}
+    Station.all
+    puts "Выберите индекс станции"
+    station_index = gets.chomp.to_i
+    station = Station.get_station(station_index)
+    if station.nil?
+      puts "Вы ввели неправильный индекс"
+    else
+      route.add_station(station)
+      Route.change_route(route_index, route)
+    end
+  end
+end
+
+def create_route
+    Station.all
+    puts "Выберите индекс начальной станции"
+    begin_station_index = gets.chomp.to_i
+    begin_station = Station.get_station(begin_station_index)
+    if begin_station.nil?
+      puts "Вы ввели неправильный индекс"
+    else
+      puts "Выберите индекс конечной станции"
+      end_station_index = gets.chomp.to_i
+      end_station = Station.get_station(begin_station_index)
+      if end_station.nil?
+        puts "Вы ввели неправильный индекс"
+      else
+        r = Route.new(begin_station,end_station)
+        puts "Маршрут #{r} создан"
+      end
+    end
+end
+
+
+#---- тестовые данные ------
+train1 = CargoTrain.new(0)
+Train.test_add_wagon
+st0 = Station.new("station0")
+st1 = Station.new("station1")
+st2 = Station.new("station2")
+st3 = Station.new("station3")
+r1 = Route.new(st0,st2)
+r1.add_station(st1)
+#---- /тестовые данные ------
+
+i = false
 while i == false
   puts 'Если вы хотите работать с программой нажмите - 1, нет - 0'
   want = gets.chomp.to_i

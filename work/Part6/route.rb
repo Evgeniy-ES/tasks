@@ -1,30 +1,35 @@
 class Route
-  require_relative 'instance_counter'
-  extend InstanceCounter::ClassMethods
-  include InstanceCounter::InstanceMethods
-  attr_reader :stations
+  include InstanceCounter
+
+  attr_accessor :stations
 
   @@all_routes = []
-  @@count_class = 0
+
+  def self.all
+    puts "Все маршруты"
+    @@all_routes.each_index { |x| puts " Индекс #{x} маршрут #{@@all_routes[x]}"}
+  end
+
+  def self.change_route(index, route)
+    @@all_routes[index] = route
+  end
+
+  def self.get_route(index)
+    @@all_routes[index]
+  end
+
   def initialize(station1, station2)
     @stations = [station1, station2]
     @@all_routes << self
+    self.register_instance
   end
 
-  def self.instances_class
-    @@count_class = instances(@@all_routes)
-    puts @@count_class
-  end
 
-  def metod_add
-    @@count_class = register_instance(@@all_routes)
-    puts @@count_class
-  end
   def add_station(station)
     if @stations.index(station).nil?
       @stations.insert(-2, station)
     else
-      puts "Такая станция уже есть в маршрте"
+      puts "Такая станция уже есть в маршруте"
     end
   end
 

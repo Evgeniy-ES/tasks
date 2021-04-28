@@ -1,78 +1,75 @@
 class Train
-  require_relative 'company'
-  require_relative 'instance_counter'
-
+  require_relative 'all_modules'
   include Company
-  extend InstanceCounter::ClassMethods
-  include InstanceCounter::InstanceMethods
-
+  include InstanceCounter
   @@trains = []
-  @@count_class = 0
-  attr_accessor :speed
-  attr_accessor :route
-  attr_reader :number_of_wagon
-  attr_reader :station
-  attr_reader :number
-  attr_reader :manufacturer
 
-  def initialize(number, company)
+  attr_accessor :speed, :route, :wagon
+  attr_reader :current_station, :number, :type
+
+  def self.all_trains
+    puts "Все поезда"
+    @@trains.each_index { |x| puts " Индекс #{x} поезд #{@@trains[x]}, количество вагонов  #{@@trains[x].wagon.size}"}
+  end
+
+  def initialize(number, type)
     @number = number
     @speed = 0
-    @route = []
-    @station = ""
-    @number_of_wagon = []
-    @manufacturer = name_company(company)
-  end
-
-  def self.instances_class
-    @@count_class = instances(@@trains)
-    puts @@count_class
-  end
-
-  def metod_add
-    @@count_class = register_instance(@@trains)
-    puts @@count_class
-  end
-
-  def self.find#(number)
-    puts "Введите номер поезда"
-    find_num = gets.chomp.to_i
-    @@trains.each do |train|
-      if train.number == find_num
-        puts "////////////////////////////////////"
-        puts "Поезд номер #{train.number}"
-        puts "Поезд тип #{train.type}"
-        puts "Производитель #{train.manufacturer}"
-        puts "////////////////////////////////////"
-        return
-      end
-    end
-    puts "////////////////////////////////////"
-    puts "Поезда с таким номером не существует"
-    puts "////////////////////////////////////"
+    @wagon = []
+    @type = type
+    @@trains << self
   end
 
   def stop
     @speed = 0
   end if
 
-  def add_wagon(wagon)
-    if @speed == 0
-      if self.type == wagon.type
-        @number_of_wagon << wagon
-      else
-        puts "Добавление вагона невозможно. Не совпадают типы поезда и вагона!"
-      end
+  def self.test_add_wagon
+    wagon = CargoWagon.new("noname")
+    @@trains[0].wagon << wagon
+  end
+
+  def self.get_train(index)
+    @@trains[index]
+  end
+
+  def self.change_train(index, train)
+    @@trains[index] = train
+  end
+
+  def self.add_wagon(index)
+    if index < 0 || index + 1 > @@trains.size
+      return puts "Введен неккоректный индекс, добавление вагона прекращено"
     else
-      puts "Добавление вагона невозможно. Остановите поезд!"
+      if @@trains[index].speed != 0
+        puts "Поезд движется со скоростью #{@@trains[index].speed}. Невозможно добавить вагон на ходу, поезд будет остановлен"
+        @@trains[index].speed = 0
+      end
+      company = self.enter_company
+      if @@trains[index].type == :cargo
+        wagon = CargoWagon.new(name)
+      else
+        wagon = PassengerWagon.new(name)
+      end
+      @@trains[index].wagon << wagon
+      puts "Вагон добавлен всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
     end
   end
 
-  def delete_wagon
-    if @speed == 0
-      delete_wagon!
+  def self.del_wagon(index)
+    if index < 0 || index + 1 > @@trains.size
+      return puts "Введен неккоректный индекс, добавление вагона прекращено"
     else
-      puts "Отцепление вагона невозможно. Остановите поезд!"
+      if @@trains[index].speed != 0
+        puts "Поезд движется со скоростью #{@@trains[index].speed}. Невозможно отцепить вагон на ходу, поезд будет остановлен"
+        @@trains[index].speed = 0
+      end
+      if @@trains[index].wagon.size < 1
+        puts "У выбранного поезда нет вагонов"
+      else
+        @@trains[index].wagon.delete_at(@@trains[index].wagon.size - 1)
+        puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
+      end
     end
   end
 
@@ -85,8 +82,8 @@ class Train
   def station_up
     return unless next_station
     @station.departure(self)
-    @station.arrive(self)
     @station = next_station
+    @station.arrive(self)
   end
 
   def station_down
@@ -113,15 +110,14 @@ class Train
   end
 
 
-
   protected
   # непосредственное удалени вагонов и перемещение поезда по станциям не должно выполняться без дополнительных проверок
-  def delete_wagon!
-    index_last_wagon = self.number_of_wagon.size
-    if index_last_wagon > 0
-      self.number_of_wagon.delete_at(index_last_wagon - 1)
+  def delete_wagon(index)
+    if @@trains[index].wagon.size < 1
+      puts "У выбранного поезда нет вагонов"
     else
-      puts "Удаление невозможно. У поезда нет вагонов."
+      @@trains[index].wagon.delete_at(@@trains[index].wagon.size - 1)
+      puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
     end
   end
 

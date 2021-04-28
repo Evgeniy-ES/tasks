@@ -1,10 +1,6 @@
 class PassengerTrain < Train
-
-  attr_reader :type
-
-  def initialize(number, company)
-    super(number, company)
-    @type = :passenger
-    @@trains << self
+  def initialize(number)
+    super(number, :passenger)
+    self.register_instance
   end
 end
