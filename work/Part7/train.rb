@@ -8,22 +8,12 @@ class Train
   attr_reader :current_station, :number, :type
 
   def self.all_trains
-    puts "Все поезда"
     @@trains.each_index { |x| puts " Индекс #{x} поезд #{@@trains[x]}, количество вагонов  #{@@trains[x].wagon.size}"}
   end
 
   def number=(number)
     raise puts "Формат номера поезда ХХХ-ХХ или ХХХХХ где Х число/латинская буква" if number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
     @number = number
-  end
-
-  def initialize(number, type)
-    self.number = number
-    @speed = 0
-    @wagon = []
-    @type = type
-    @@trains << self
-    puts "Поезд #{self} создан"
   end
 
   def valid?
@@ -34,6 +24,23 @@ class Train
     end
   end
 
+  def initialize(number, type)
+    begin
+      self.number = number
+      @speed = 0
+      @wagon = []
+      if type == :passenger || type == :cargo
+        @type = type
+      else
+        raise puts "Тип поезда должен быть либо  :passenger либо :cargo"
+      end
+      @@trains << self
+      puts "Поезд #{self} создан"
+    rescue
+      puts "Введите корректные данные"
+    end
+  end
+
   def stop
     @speed = 0
   end if
@@ -41,10 +48,6 @@ class Train
   def self.get_train(index)
     @@trains[index]
   end
-
-#  def self.change_train(index, train)
-  #  @@trains[index] = train
-  #end
 
   def self.add_wagon(index)
     if index < 0 || index + 1 > @@trains.size

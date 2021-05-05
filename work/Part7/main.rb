@@ -12,6 +12,7 @@ include Menu  # методы связанные с выводом вопросо
 
 
 def menu      # главное меню, тут выбираются объекты для дальнейшей работы
+  require 'pry'; binding.pry
   i = false
   while i == false
     want = get_menu_main
@@ -104,15 +105,13 @@ def create_train
     num_train = gets.chomp
     puts "Введите 0 если поезд грузовой, если пассажирский, то любую другую клавишу"
     type_train_num = gets.chomp
-   begin
+
     if  type_train_num == 0
       CargoTrain.new(num_train)
     else
       PassengerTrain.new(num_train)
     end
-  rescue
-    puts "Введите корректный номер"
-  end
+
 end
 
 def add_wagon
@@ -182,14 +181,10 @@ def show_trains_on_station
 end
 
 def create_station
-    Station.all
-    puts "Введите название станции"
-    want = gets.chomp.to_s
-    begin
-      Station.new(want)
-    end
-    rescue
-    puts "Станция не создана. Введите корректное название"
+   Station.all
+   puts "Введите название станции"
+   want = gets.chomp.to_s
+   Station.new(want)
 end
 
 def menu_routes

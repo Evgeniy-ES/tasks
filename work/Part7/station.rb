@@ -6,7 +6,6 @@ class Station
   @@stations = []
 
   def self.all
-    puts "Все станции"
     @@stations.each_index { |x| puts " Индекс #{x} станция #{@@stations[x]}, имя станции  #{@@stations[x].name}"}
   end
 
@@ -27,12 +26,16 @@ class Station
   end
 
   def initialize(station)
-    @name = station
-    validate!
-    @@stations << self
-    @tarins_on_station = []
-    self.register_instance
-    puts "Станция #{self} создана"
+    begin
+      @name = station
+      validate!
+      @@stations << self
+      @tarins_on_station = []
+      self.register_instance
+      puts "Станция #{self} создана"
+    rescue
+      puts "Станция не создана. Введите корректное название"
+    end
   end
 
   def arrive(train)       # прибытие поезда

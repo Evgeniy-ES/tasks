@@ -6,22 +6,15 @@ class Route
   @@all_routes = []
 
   def self.all
-    puts "Все маршруты"
     @@all_routes.each_index { |x| puts " Индекс #{x} маршрут #{@@all_routes[x]}"}
   end
-
-#  def self.change_route(index, route)
-#    @@all_routes[index] = route
-#  end
 
   def self.get_route(index)
     @@all_routes[index]
   end
 
-  def initialize(station1, station2)
-    @stations = [station1, station2]
-    @@all_routes << self
-    self.register_instance
+  def validate!
+    raise puts "В маршруте должно содержаться как минимум 2 станции" if @stations.size >= 2
   end
 
   def valid?
@@ -31,6 +24,20 @@ class Route
       rezult = false
     end
   end
+
+  def initialize(station1, station2)
+    begin
+      @stations = [station1, station2]
+      validate!
+      @@all_routes << self
+      self.register_instance
+    rescue
+      puts "Маршрут не создан. В маршруте должно содержаться как минимум 2 станции"
+    end
+
+  end
+
+
 
   def add_station(station)
     if @stations.index(station).nil?
