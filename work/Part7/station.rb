@@ -49,5 +49,4 @@ class Station
   def trains_on_station
     @tarins_on_station.each { |train| puts train}
   end
-
 end

@@ -29,8 +29,6 @@ class Route
 
   end
 
-
-
   def add_station(station)
     if @stations.index(station).nil?
       @stations.insert(-2, station)

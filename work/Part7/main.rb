@@ -95,7 +95,6 @@ def add_route_train
       puts "Вы ввели неправильный индекс"
     else
       train.route_train(route)
-      #Train.change_train(train_index, train)
     end
   end
 end
@@ -228,7 +227,6 @@ def add_station_in_route
       puts "Вы ввели неправильный индекс"
     else
       route.add_station(station)
-      #Route.change_route(route_index, route)
     end
   end
 end
