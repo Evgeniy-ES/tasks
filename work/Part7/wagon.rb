@@ -14,14 +14,6 @@ class Wagon
     end
   end
 
-  def valid?
-    rezult = true
-    if @type == :passenger || @type == :cargo || @name.nil?
-      rezult = false
-    end
-    rezult
-  end
-
   def initialize(name, type)
     begin
       @type = type

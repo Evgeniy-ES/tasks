@@ -14,28 +14,17 @@ class Station
   end
 
   def validate!
-    raise puts "В названии станции должно содержаться как минимум 2 буквы" if @name !~ /[a-zа-я]{2}/
-  end
-
-  def valid?
-    if  @name =~ /[a-zа-я]{2}/
-      rezult = true
-    else
-      rezult = false
-    end
+    raise if @name !~ /[a-zа-я]{2}/
   end
 
   def initialize(station)
-    begin
-      @name = station
-      validate!
-      @@stations << self
-      @tarins_on_station = []
-      self.register_instance
-      puts "Станция #{self} создана"
-    rescue
-      puts "Станция не создана. Введите корректное название"
-    end
+    @name = station
+    @@stations << self
+    @tarins_on_station = []
+    self.register_instance
+    validate!
+  rescue
+    puts "В названии станции должно содержаться как минимум 2 буквы"
   end
 
   def arrive(train)       # прибытие поезда

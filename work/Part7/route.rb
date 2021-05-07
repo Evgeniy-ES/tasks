@@ -14,15 +14,7 @@ class Route
   end
 
   def validate!
-    raise puts "В маршруте должно содержаться как минимум 2 станции" if @stations.size >= 2
-  end
-
-  def valid?
-    if @stations.size >= 2
-      rezult = true
-    else
-      rezult = false
-    end
+    raise if @stations.size < 2
   end
 
   def initialize(station1, station2)

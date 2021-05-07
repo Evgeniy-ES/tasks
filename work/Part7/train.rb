@@ -11,31 +11,23 @@ class Train
     @@trains.each_index { |x| puts " Индекс #{x} поезд #{@@trains[x]}, количество вагонов  #{@@trains[x].wagon.size}"}
   end
 
-  def number=(number)
-    raise puts "Формат номера поезда ХХХ-ХХ или ХХХХХ где Х число/латинская буква" if number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
-    @number = number
-  end
-
-  def valid?
-    if  @number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
-      rezult = true
+  def validate!
+    raise puts "Формат номера поезда ХХХ-ХХ или ХХХХХ где Х число/латинская буква" if @number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
+    if @type == :passenger || @type == :cargo
+      @type = type
     else
-      rezult = false
+      raise puts "Тип поезда должен быть либо  :passenger либо :cargo"
     end
   end
 
   def initialize(number, type)
     begin
-      self.number = number
+      @number = number
+      @type = type
       @speed = 0
       @wagon = []
-      if type == :passenger || type == :cargo
-        @type = type
-      else
-        raise puts "Тип поезда должен быть либо  :passenger либо :cargo"
-      end
       @@trains << self
-      puts "Поезд #{self} создан"
+      validate!
     rescue
       puts "Введите корректные данные"
     end

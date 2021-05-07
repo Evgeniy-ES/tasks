@@ -9,10 +9,10 @@ require_relative 'cargo_wagon'
 require_relative 'all_modules'
 
 include Menu  # методы связанные с выводом вопросов, были вынесены в отдельный модуль, для лучшей читаемости кода
-
+include ValidateDate
 
 def menu      # главное меню, тут выбираются объекты для дальнейшей работы
-  require 'pry'; binding.pry
+#  require 'pry'; binding.pry
   i = false
   while i == false
     want = get_menu_main
@@ -107,9 +107,13 @@ def create_train
     type_train_num = gets.chomp
 
     if  type_train_num == 0
-      CargoTrain.new(num_train)
+      train = CargoTrain.new(num_train)
     else
-      PassengerTrain.new(num_train)
+      train = PassengerTrain.new(num_train)
+    end
+
+    unless train.nil?
+      puts "Поезд создан" if train.valid?
     end
 
 end
@@ -181,10 +185,14 @@ def show_trains_on_station
 end
 
 def create_station
-   Station.all
-   puts "Введите название станции"
-   want = gets.chomp.to_s
-   Station.new(want)
+  Station.all
+  puts "Введите название станции"
+  want = gets.chomp.to_s
+  station = Station.new(want)
+  unless station.nil?
+    puts "Станция создана" if station.valid?
+  end
+
 end
 
 def menu_routes
@@ -240,7 +248,9 @@ def create_route
         puts "Вы ввели неправильный индекс"
       else
         r = Route.new(begin_station,end_station)
-        puts "Маршрут #{r} создан"
+        unless r.nil?
+          puts "Маршрут #{r} создан" if r.valid?
+        end
       end
     end
 end
@@ -251,7 +261,6 @@ end
 #Train.test_add_wagon
 st0 = Station.new("station0")
 st1 = Station.new("station1")
-puts "aa #{st1.valid?}"
 st2 = Station.new("station2")
 st3 = Station.new("station3")
 r1 = Route.new(st0,st2)

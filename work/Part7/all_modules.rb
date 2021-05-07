@@ -71,3 +71,28 @@ module InstanceCounter
     end
   end
 end
+
+module ValidateDate
+  def self.included(base)
+    base.extend ClassMethods
+    base.include InstanceMethods
+  end
+
+  module ClassMethods
+  end
+
+  module InstanceMethods
+    def validate
+      validate!
+    rescue RuntimeError => event
+      puts event.message
+    end
+
+    def valid?
+      validate!
+      true
+    rescue
+      false
+    end
+  end
+end
