@@ -1,26 +1,16 @@
 class Wagon
   include Menu
+  include ValidateDate
   attr_reader :type, :name
 
   def validate!
-    if @type == :passenger || @type == :cargo
-      @type = type
-    else
-      raise puts "Тип вагона должен быть либо  :passenger либо :cargo"
-    end
-
-    if @name.nil? || @name == ""
-      raise puts "Название изготовителя не может быть пустым"
-    end
+    raise "Вагон не создан. Тип вагона должен быть либо  :passenger либо :cargo" if @type == :passenger || @type == :cargo
+    raise "Вагон не создан. Название изготовителя не может быть пустым"  if @name.nil? || @name == ""      
   end
 
   def initialize(name, type)
-    begin
-      @type = type
-      @name = name
-      validate!
-    rescue
-      puts "Вагон не создан"
-    end
+    @type = type
+    @name = name
+    validate
   end
 end

@@ -2,6 +2,7 @@ class Train
   require_relative 'all_modules'
   include Company
   include InstanceCounter
+  include ValidateDate
   @@trains = []
 
   attr_accessor :speed, :route, :wagon
@@ -12,25 +13,19 @@ class Train
   end
 
   def validate!
-    raise puts "Формат номера поезда ХХХ-ХХ или ХХХХХ где Х число/латинская буква" if @number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
-    if @type == :passenger || @type == :cargo
-      @type = type
-    else
-      raise puts "Тип поезда должен быть либо  :passenger либо :cargo"
-    end
+    raise "Поезд не создан. Формат номера поезда должен быть ХХХ-ХХ или ХХХХХ где Х число/латинская буква" if @number !~ /^[a-z0-9]{3}-?[a-z0-9]{2}$/i
+    raise "Поезд не создан. Тип поезда должен быть либо  :passenger либо :cargo" unless @type == :passenger || @type == :cargo
   end
 
   def initialize(number, type)
-    begin
       @number = number
       @type = type
-      @speed = 0
-      @wagon = []
-      @@trains << self
-      validate!
-    rescue
-      puts "Введите корректные данные"
-    end
+      validate
+      if self.valid? == true
+        @speed = 0
+        @wagon = []
+        @@trains << self
+      end
   end
 
   def stop

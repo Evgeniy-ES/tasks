@@ -1,6 +1,6 @@
 class Route
   include InstanceCounter
-
+  include ValidateDate
   attr_accessor :stations
 
   @@all_routes = []
@@ -14,19 +14,14 @@ class Route
   end
 
   def validate!
-    raise if @stations.size < 2
+    raise "Маршрут не создан. В маршруте должно содержаться как минимум 2 станции" if @stations.size < 2
   end
 
   def initialize(station1, station2)
-    begin
-      @stations = [station1, station2]
-      validate!
-      @@all_routes << self
-      self.register_instance
-    rescue
-      puts "Маршрут не создан. В маршруте должно содержаться как минимум 2 станции"
-    end
-
+    @stations = [station1, station2]
+    validate!
+    @@all_routes << self
+    self.register_instance
   end
 
   def add_station(station)

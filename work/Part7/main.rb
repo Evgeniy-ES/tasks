@@ -103,7 +103,7 @@ def create_train
     puts "Введите номер поезда"
     num_train = gets.chomp
     puts "Введите 0 если поезд грузовой, если пассажирский, то любую другую клавишу"
-    type_train_num = gets.chomp
+    type_train_num = gets.chomp.to_i
 
     if  type_train_num == 0
       train = CargoTrain.new(num_train)

@@ -1,6 +1,7 @@
 class Station
   require_relative 'all_modules'
   include InstanceCounter
+  include ValidateDate
 
   attr_reader :name, :trains_on_station
   @@stations = []
@@ -14,17 +15,17 @@ class Station
   end
 
   def validate!
-    raise if @name !~ /[a-zа-я]{2}/
+    raise "В названии станции должно содержаться как минимум 2 буквы" if @name !~ /[a-zа-я]{2}/
   end
 
   def initialize(station)
     @name = station
-    @@stations << self
-    @tarins_on_station = []
-    self.register_instance
-    validate!
-  rescue
-    puts "В названии станции должно содержаться как минимум 2 буквы"
+    validate
+    if self.valid? == true
+      @@stations << self
+      @tarins_on_station = []
+      self.register_instance
+    end  
   end
 
   def arrive(train)       # прибытие поезда
