@@ -155,6 +155,8 @@ def work_with_stations
       show_trains_on_station
     when 4
       show_type_trains_on_station
+    when 5
+      Station.info_about_stations
     end
   end
 end
@@ -187,7 +189,7 @@ def show_trains_on_station
   if station.nil?
     puts "Вы ввели неправильный индекс"
   else
-    station.trains_on_station {|x| puts "Поезд тип #{x.type}, номер #{x.number}, количество вагонов #{x.wagon.size}"}
+    station.train_on_station {|x| puts "Поезд тип #{x.type}, номер #{x.number}, количество вагонов #{x.wagon.size}"}
   end
 end
 
@@ -263,7 +265,7 @@ end
 
 
 #---- тестовые данные ------
-#rain1 = CargoTrain.new(12345)
+#train = CargoTrain.new(num_train)
 #Train.test_add_wagon
 st0 = Station.new("station0")
 st1 = Station.new("station1")

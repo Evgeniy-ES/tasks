@@ -6,11 +6,11 @@ class Train
   include ValidateDate
   @@trains = []
 
-  attr_accessor :speed, :route, :wagon
+  attr_accessor :speed, :route, :wagons
   attr_reader :current_station, :number, :type
 
   def self.all_trains
-    @@trains.each_index { |x| puts " Индекс #{x} поезд #{@@trains[x]}, количество вагонов  #{@@trains[x].wagon.size}"}
+    @@trains.each_index { |x| puts " Индекс #{x} поезд #{@@trains[x]}, количество вагонов  #{@@trains[x].wagons.size}"}
   end
 
   def validate!
@@ -24,7 +24,7 @@ class Train
       validate
       if self.valid? == true
         @speed = 0
-        @wagon = []
+        @wagons = []
         @@trains << self
       end
   end
@@ -38,7 +38,11 @@ class Train
   end
 
   def self.all_wagons(index, &block)
-    @@trains[index].wagon.each_index { |train| block.call(index, train) }
+    @@trains[index].wagons.each_index { |wagon| block.call(index, wagon) }
+  end
+
+  def all_wagons_train(&block)
+    @wagons.each_index { |wagon| block.call(wagon) }
   end
 
   def self.occupation_volume_in_wagon(index)
@@ -50,19 +54,19 @@ class Train
         @@trains[index].speed = 0
       end
 
-      self.all_wagons(index) { |index, x| puts " Индекс #{x} вагон типа #{@@trains[index].wagon[x].type}, всего #{@@trains[index].wagon[x].wagon_msg} #{@@trains[index].wagon[x].size}, свободно #{@@trains[index].wagon[x].free_volume}"}
+      self.all_wagons(index) { |index, x| puts " Индекс #{x} вагон типа #{@@trains[index].wagons[x].type}, всего #{@@trains[index].wagons[x].wagon_msg} #{@@trains[index].wagons[x].size}, свободно #{@@trains[index].wagons[x].free_volume}"}
       puts "Введите индекс вагона который хотите заполнить"
-      index_wagon = gets.chomp.to_i
+      index_wagons = gets.chomp.to_i
 
-      if index_wagon < 0 || index_wagon + 1 > @@trains[index].wagon.size
+      if index_wagons < 0 || index_wagons + 1 > @@trains[index].wagons.size
         return puts "Введен неккоректный индекс, заполнение вагона прекращено"
       else
         if @@trains[index].type == :cargo
           puts "Введите объем который хотите заполнить"
           volume_want = gets.chomp.to_f
-          @@trains[index].wagon[index_wagon].occupation_volume(volume_want)
+          @@trains[index].wagons[index_wagons].occupation_volume(volume_want)
         else
-          @@trains[index].wagon[index_wagon].occupation_volume
+          @@trains[index].wagons[index_wagons].occupation_volume
         end
       end
     end
@@ -86,8 +90,8 @@ class Train
         work_place = gets.chomp.to_i
         wagon = PassengerWagon.new(name, work_place)
       end
-      @@trains[index].wagon << wagon
-      puts "Вагон добавлен всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
+      @@trains[index].wagons << wagon
+      puts "Вагон добавлен всего у поезда #{@@trains[index]} #{@@trains[index].wagons.size} вагонов"
     end
   end
 
@@ -99,11 +103,11 @@ class Train
         puts "Поезд движется со скоростью #{@@trains[index].speed}. Невозможно отцепить вагон на ходу, поезд будет остановлен"
         @@trains[index].speed = 0
       end
-      if @@trains[index].wagon.size < 1
+      if @@trains[index].wagons.size < 1
         puts "У выбранного поезда нет вагонов"
       else
-        @@trains[index].wagon.delete_at(@@trains[index].wagon.size - 1)
-        puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
+        @@trains[index].wagons.delete_at(@@trains[index].wagons.size - 1)
+        puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagons.size} вагонов"
       end
     end
   end
@@ -148,11 +152,11 @@ class Train
   protected
   # непосредственное удалени вагонов и перемещение поезда по станциям не должно выполняться без дополнительных проверок
   def delete_wagon(index)
-    if @@trains[index].wagon.size < 1
+    if @@trains[index].wagons.size < 1
       puts "У выбранного поезда нет вагонов"
     else
-      @@trains[index].wagon.delete_at(@@trains[index].wagon.size - 1)
-      puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagon.size} вагонов"
+      @@trains[index].wagons.delete_at(@@trains[index].wagons.size - 1)
+      puts "Вагон удален всего у поезда #{@@trains[index]} #{@@trains[index].wagons.size} вагонов"
     end
   end
 

@@ -1,5 +1,6 @@
 class Station
   require_relative 'all_modules'
+  require_relative 'train'
   include InstanceCounter
   include ValidateDate
 
@@ -47,7 +48,27 @@ class Station
     puts trains_type
   end
 
-  def trains_on_station(&block)
+  def train_on_station(&block)
     @trains_on_station.each { |train| block.call(train) }
+  end
+
+  def self.info_about_stations
+      @@stations.each_index do |index_station|
+        puts " Имя станции  #{@@stations[index_station].name}"
+
+        if @@stations[index_station].trains_on_station.size > 0
+          puts "На станции:"
+          @@stations[index_station].trains_on_station.each do |train|            
+            puts " - Поезд тип #{train.type}, номер #{train.number}, количество вагонов #{train.wagons.size}"
+            if train.wagons.size > 0
+              puts "Вагоны поезда:"
+              train.all_wagons_train { |x| puts "Вагон номер #{x} вагон типа #{train.wagons[x].type}, всего #{train.wagons[x].wagon_msg} #{train.wagons[x].size}, свободно #{train.wagons[x].free_volume}"}
+              puts "---------------------------"
+            end
+          end
+        else
+          puts "На станции нет поездов."
+        end
+      end
   end
 end

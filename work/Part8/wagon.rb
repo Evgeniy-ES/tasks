@@ -22,7 +22,7 @@ class Wagon
   end
 
   def free_volume
-    @size - @used_size
+    size - used_size
   end
 
   def wagon_msg
@@ -31,9 +31,9 @@ class Wagon
   end
 
   def occupation_volume(volume = 1)
-    return puts "Вагон полон!" if @size == @used_size
-    return puts " #{self.wagon_msg} в вагоне меньше, чем вы хотите ввести! Вы ввели #{volume}, свободно #{self.free_volume}" if @size - @used_size - volume < 0
+    return puts "Вагон полон!" if size == used_size
+    return puts " #{wagon_msg} в вагоне меньше, чем вы хотите ввести! Вы ввели #{volume}, свободно #{free_volume}" if size - used_size - volume < 0
     @used_size += volume
-    puts "Заполнение прошло успешно. Всего #{self.wagon_msg} #{@size}. Свободно #{self.free_volume}"
+    puts "Заполнение прошло успешно. Всего #{wagon_msg} #{@size}. Свободно #{free_volume}"
   end
 end
