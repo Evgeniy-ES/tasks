@@ -57,19 +57,19 @@ class Train
     str0 = 'Введен неккоректный индекс, добавление вагона прекращено'
     return puts str0 if index < 0 || index + 1 > @@trains.size
     stop_train(index)
-    all_wagons(index) { |_index1, x| msg_wagon(x) }
+    all_wagons(index) { |_index1, x| msg_wagon(index, x) }
     puts 'Введите индекс вагона который хотите заполнить'
     index_wagons = gets.chomp.to_i
     occupation_volume_in_wagon1(index, index_wagons)
   end
 
-  def msg_wagon(x)
+  def self.msg_wagon(index, x)
     str2 = "  #{@@trains[index].wagons[x].size},"
     str3 = " свободно #{@@trains[index].wagons[x].free_volume}"
-    puts msg_wagon0(x) + str2 + str3
+    puts msg_wagon0(index, x) + str2 + str3
   end
 
-  def msg_wagon0(x)
+  def self.msg_wagon0(index, x)
     str0 = "Индекс #{x} вагон типа #{@@trains[index].wagons[x].type}, всего"
     str1 = " #{@@trains[index].wagons[x].wagon_msg}"
     str0 + str1
@@ -108,7 +108,7 @@ class Train
   def self.add_wagon2(index)
     add_wagon0(index)
     enter_company
-    add_wagon1(index)
+    wagon = add_wagon1(index)
     @@trains[index].wagons << wagon
     str0 = 'Вагон добавлен всего у поезда'
     puts str0 + " #{@@trains[index]} #{@@trains[index].wagons.size} вагонов"
@@ -129,11 +129,11 @@ class Train
     else
       puts 'Введите количество посадочных мест вагона'
     end
-    gets.chomp
+    gets.chomp.to_i
   end
 
   def self.add_wagon0(index)
-    retunt if @@trains[index].speed.zero?
+    return if @@trains[index].speed.zero?
     str0 = 'Невозможно занимать место в вагонe на ходу,'
     str0 += ' поезд будет остановлен'
     puts "Поезд движется со скоростью #{@@trains[index].speed}. " + str0
@@ -180,21 +180,21 @@ class Train
   def route_train(route)
     @route = route
     @station = @route.stations[0]
-    @station.arrive(self)
+    @station.arrive(self, @station)
   end
 
   def station_up
     return unless next_station
-    @station.departure(self)
+    @station.departure(self, @station)
     @station = next_station
-    @station.arrive(self)
+    @station.arrive(self, @station)
   end
 
   def station_down
     return unless previous_station
-    @station.departure(self)
+    @station.departure(self, @station)
     @station = previous_station
-    @station.arrive(self)
+    @station.arrive(self, @station)
   end
 
   def now_place

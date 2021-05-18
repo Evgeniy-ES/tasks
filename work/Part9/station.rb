@@ -11,7 +11,7 @@ class Station
     @@stations.each_index { |x| view_stations(x) }
   end
 
-  def view_stations(x)
+  def self.view_stations(x)
     s0 = " Индекс #{x} станция #{@@stations[x]},"
     puts s0 + " имя станции  #{@@stations[x].name}"
   end
@@ -34,15 +34,15 @@ class Station
     register_instance
   end
 
-  def arrive(train)
+  def arrive(train, station)
     @trains_on_station << train
-    puts "Поезд с номером #{train.number} прибыл на станцию #{train.name}"
+    puts "Поезд с номером #{train.number} прибыл на станцию #{station.name}"
   end
 
-  def departure(train)
+  def departure(train, station)
     if @trains_on_station.include?(train)
       @trains_on_station.delete(train)
-      puts "Поезд с номером #{train.number} отбыл со станции #{train.name}"
+      puts "Поезд с номером #{train.number} отбыл со станции #{station.name}"
     else
       puts 'Поезда с таким номером нет на станции'
     end
@@ -68,14 +68,14 @@ class Station
     end
   end
 
-  def display_train(trains_on_station_for_method)
+  def self.display_train(trains_on_station_for_method)
     puts 'На станции:'
     trains_on_station_for_method.each do |train|
       display_train0(train)
     end
   end
 
-  def display_train0(train)
+  def self.display_train0(train)
     puts " - Поезд тип #{train.type}, номер #{train.number}," +
          + " количество вагонов #{train.wagons.size}"
     return if train.wagons.empty?
