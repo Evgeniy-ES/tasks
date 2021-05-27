@@ -8,6 +8,7 @@ class Station
 
   validate :name, :presence
   validate :name, :format, /[a-zа-я]{2}/
+  validate :name, :type, :String
 
   @@stations = []
 

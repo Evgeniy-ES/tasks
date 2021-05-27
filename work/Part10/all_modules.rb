@@ -201,7 +201,7 @@ module Validation
 
         if data.key?(:type)
           data[:type].each do |type|
-            raise "Атрибут #{name} не соответствует типу #{type}" if val_name.class != type
+            raise "Атрибут #{name} не соответствует типу #{type}" if val_name.class.name != type.to_s
           end
         end
       end
