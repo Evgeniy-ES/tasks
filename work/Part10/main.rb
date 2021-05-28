@@ -1,3 +1,18 @@
+class Car
+  require_relative 'all_modules'
+  include Accessors
+
+  attr_accessor_with_history :brand, :color
+end
+
+class Car1
+  require_relative 'all_modules'
+  include Accessors
+
+  strong_attr_accessor :brand, :String
+end
+
+
 class RailsRoad
   require_relative 'all_modules'
   require_relative 'station'

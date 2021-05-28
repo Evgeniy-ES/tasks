@@ -5,53 +5,35 @@ module Accessors
   end
 
   module ClassMethods
-    #def attr_accessor_with_history(*name)
-      #var_name = "@#{name}".to_sym
-      #define_method("#{name}".to_sym) { instance_variable_get(var_name) }
-      #define_method("#{name}=".to_sym) { |value| instance_variable_set(var_name, value) }
-    #end
+    def attr_accessor_with_history(*name)
+      puts "--------"
+      var_name = "@#{name}".to_sym
+      history_name = "#{name}_history"
+      var_history_name = "@#{name}_history"
+      name = name.to_s
+      puts "name #{name}"
+      define_method(name) { instance_variable_get(var_name) }
+      define_method(history_name) { instance_variable_get(var_history_name) }
 
-    def attr_accessor_with_history(*methods)
-    options = methods.last.is_a?(Hash)? methods.pop: {}
-    methods.each do |method|
-      raise TypeError.new("method name is not symbol") unless method.is_a?(Symbol)
-      define_method(method) do
-        instance_variable_get("@#{method}") ||
-          instance_variable_set("@#{method}", options[:default])
-      end
-
-      define_method("#{method}=") do |value|
-        instance_variable_set("@#{method}", value)
-        var_history_name = "@#{method}_history"
+      define_method("#{name}=".to_sym) do |value|
+        instance_variable_set(var_name, value)
         instance_variable_set(var_history_name, []) unless instance_variable_get(var_history_name)
-        @array_history_name = instance_variable_get(var_history_name)
-        unless @array_history_name.include?(value)
-          @array_history_name << value
-          instance_variable_set(var_history_name, @array_history_name)
+        array_history_name = instance_variable_get(var_history_name)
+        unless array_history_name.include?(value)
+          array_history_name << value
+          instance_variable_set(var_history_name, array_history_name)
+          array_history_name
         end
       end
-
-      history_name = "#{method}_history"
-      define_method(history_name) do
-        instance_variable_get("@#{history_name}") ||
-          instance_variable_set("@#{history_name}", @array_history_name)
-      end
-
-      define_method(history_name) do
-        instance_variable_get("@#{history_name}") ||
-          instance_variable_set("@#{history_name}", options[:default])
-      end
     end
-  end
 
-    def strong_attr_accessor(*names, name_class)
-      options = names.last.is_a?(Hash)? names.pop: {}
+    def strong_attr_accessor(name, name_class)
+      var_name = "@#{name}".to_sym
+      define_method(name) { instance_variable_get(var_name) }
+
       names.each do |name|
-        var_name = "@#{name}".to_sym
-        define_method(name) { instance_variable_get(var_name) }
-
         define_method("#{name}=") do |value|
-          raise "Ошибка типов данных. Необходим класс: #{name_class}" if value.class.name.capitalize != name_class.to_s.capitalize
+          raise "Ошибка типов данных. Необходим класс: #{name_class}" if value.class != name_class
           instance_variable_set(var_name, value)
         end
       end
