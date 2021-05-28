@@ -2,7 +2,7 @@ class Car
   require_relative 'all_modules'
   include Accessors
 
-  attr_accessor_with_history :brand, :color
+  attr_accessor_with_history :brand#, :color
 end
 
 class Car1

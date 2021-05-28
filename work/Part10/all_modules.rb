@@ -5,11 +5,6 @@ module Accessors
   end
 
   module ClassMethods
-    #def attr_accessor_with_history(*name)
-      #var_name = "@#{name}".to_sym
-      #define_method("#{name}".to_sym) { instance_variable_get(var_name) }
-      #define_method("#{name}=".to_sym) { |value| instance_variable_set(var_name, value) }
-    #end
 
     def attr_accessor_with_history(*methods)
       options = methods.last.is_a?(Hash)? methods.pop: {}
