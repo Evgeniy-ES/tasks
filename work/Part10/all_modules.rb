@@ -39,16 +39,13 @@ module Accessors
     end
   end
 
-    def strong_attr_accessor(*names, name_class)
-      options = names.last.is_a?(Hash)? names.pop: {}
-      names.each do |name|
-        var_name = "@#{name}".to_sym
-        define_method(name) { instance_variable_get(var_name) }
+    def strong_attr_accessor(name, name_class)
+      var_name = "@#{name}".to_sym
+      define_method(name) { instance_variable_get(var_name) }
 
-        define_method("#{name}=") do |value|
-          raise "Ошибка типов данных. Необходим класс: #{name_class}" if value.class.name.capitalize != name_class.to_s.capitalize
-          instance_variable_set(var_name, value)
-        end
+      define_method("#{name}=") do |value|
+        raise "Ошибка типов данных. Необходим класс: #{name_class}" if value.class.name.capitalize != name_class.to_s.capitalize
+        instance_variable_set(var_name, value)
       end
     end
   end
