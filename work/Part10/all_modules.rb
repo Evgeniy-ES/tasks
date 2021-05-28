@@ -12,13 +12,13 @@ module Accessors
     #end
 
     def attr_accessor_with_history(*methods)
-    options = methods.last.is_a?(Hash)? methods.pop: {}
-    methods.each do |method|
-      raise TypeError.new("method name is not symbol") unless method.is_a?(Symbol)
-      define_method(method) do
-        instance_variable_get("@#{method}") ||
+      options = methods.last.is_a?(Hash)? methods.pop: {}
+      methods.each do |method|
+        raise TypeError.new("method name is not symbol") unless method.is_a?(Symbol)
+        define_method(method) do
+          instance_variable_get("@#{method}") ||
           instance_variable_set("@#{method}", options[:default])
-      end
+        end
 
       define_method("#{method}=") do |value|
         instance_variable_set("@#{method}", value)
