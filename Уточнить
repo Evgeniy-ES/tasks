@@ -1,0 +1,18 @@
+  def number=(number)
+    if number == 0
+      raise "Нельзя вводить 0"
+    end
+      number
+  end
+
+  def initialize(number, type)
+    self.number = number
+    @speed = 0
+    @wagon = []
+    @type = type
+    @@trains << self
+  end
+  
+  /home/evgeniy/git_tutorial/work/Part7/train.rb:17:in `number=': Нельзя вводить 0 (RuntimeError)
+
+  
