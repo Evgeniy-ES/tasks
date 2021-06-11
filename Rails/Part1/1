@@ -1,0 +1,100 @@
+evgeniy@evgeniy-Inspiron-5748:~$ ncat -C httpbin.org 80
+GET http://httpbin.org/anything HTTP/1.1
+Host: httpbin.org
+
+HTTP/1.1 200 OK
+Date: Fri, 11 Jun 2021 16:18:40 GMT
+Content-Type: application/json
+Content-Length: 286
+Connection: keep-alive
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {}, 
+  "data": "", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-60c38ce0-4408c69438132e3d7891b661"
+  }, 
+  "json": null, 
+  "method": "GET", 
+  "origin": "85.26.234.175", 
+  "url": "http://httpbin.org/anything"
+}
+
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+evgeniy@evgeniy-Inspiron-5748:~$ ncat -C httpbin.org 80
+GET http://httpbin.org/anything?user=1&len=2 HTTP/1.1 
+Host: httpbin.org
+
+HTTP/1.1 200 OK
+Date: Fri, 11 Jun 2021 16:19:27 GMT
+Content-Type: application/json
+Content-Length: 335
+Connection: keep-alive
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {
+    "len": "2", 
+    "user": "1"
+  }, 
+  "data": "", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-60c38d0f-5c48a15b7b188c6630fae6fa"
+  }, 
+  "json": null, 
+  "method": "GET", 
+  "origin": "85.26.234.175", 
+  "url": "http://httpbin.org/anything?user=1&len=2"
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+
+evgeniy@evgeniy-Inspiron-5748:~$ ncat -C httpbin.org 80
+POST http://httpbin.org/anything HTTP/1.1
+Host: httpbin.org
+Content-Length:7
+
+level=2
+HTTP/1.1 200 OK
+Date: Fri, 11 Jun 2021 16:23:15 GMT
+Content-Type: application/json
+Content-Length: 322
+Connection: keep-alive
+Server: gunicorn/19.9.0
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+
+{
+  "args": {}, 
+  "data": "level=2", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Content-Length": "7", 
+    "Host": "httpbin.org", 
+    "X-Amzn-Trace-Id": "Root=1-60c38df0-209a5478649403b172f64e5c"
+  }, 
+  "json": null, 
+  "method": "POST", 
+  "origin": "85.26.234.175", 
+  "url": "http://httpbin.org/anything"
+}
+
